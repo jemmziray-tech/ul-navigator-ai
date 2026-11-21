@@ -1,0 +1,74 @@
+{
+  "academic_year": "2026/27",
+  "grades": [
+    {
+      "grade": "A1",
+      "qpv": 4
+    },
+    {
+      "grade": "A2",
+      "qpv": 3.6
+    },
+    {
+      "grade": "B1",
+      "qpv": 3.2
+    },
+    {
+      "grade": "B2",
+      "qpv": 3
+    },
+    {
+      "grade": "B3",
+      "qpv": 2.8
+    },
+    {
+      "grade": "C1",
+      "qpv": 2.6
+    },
+    {
+      "grade": "C2",
+      "qpv": 2.4
+    },
+    {
+      "grade": "C3",
+      "qpv": 2
+    },
+    {
+      "grade": "D1",
+      "qpv": 1.6
+    },
+    {
+      "grade": "F",
+      "qpv": 0
+    },
+    {
+      "grade": "NG",
+      "qpv": 0
+    }
+  ],
+  "classifications": [
+    {
+      "min_qca": 3.3,
+      "label": "First class honours"
+    },
+    {
+      "min_qca": 2.9,
+      "label": "Second class honours, grade 1 (2.1)"
+    },
+    {
+      "min_qca": 2.5,
+      "label": "Second class honours, grade 2 (2.2)"
+    },
+    {
+      "min_qca": 2,
+      "label": "Third class honours"
+    }
+  ],
+  "formula": "QCA = Σ(QPV × counted credits) ÷ Σ(counted credits)",
+  "sources": [
+    {
+      "title": "UL Academic Regulations 2026/27: grades (PDF p.13), classifications (p.14–15), QCA (p.26)",
+      "url": "https://www.ul.ie/media/handbook-of-academic-regulations-and-procedures-2026-27/download"
+    }
+  ]
+}

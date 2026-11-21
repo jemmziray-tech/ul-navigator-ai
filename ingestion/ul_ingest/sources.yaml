@@ -1,0 +1,311 @@
+# Seed sources for the UL Navigator AI knowledge base.
+# Only public, official University of Limerick pages. The crawler obeys robots.txt,
+# rate limits itself and never follows login/authenticated links.
+#
+# category: used for metadata filtering and source coverage analytics
+# year:     academic year the content applies to (auto-detected when omitted)
+# discover: follow same-site links from this page (depth limited by CRAWL_MAX_DEPTH)
+
+user_agent_contact: "Set CRAWL_USER_AGENT in .env to include your contact e-mail"
+
+allowed_hosts:
+  - www.ul.ie
+  - ul.ie
+  - www.bookofmodules.ul.ie
+
+# Discovered links must start with one of these path prefixes (seed pages always allowed).
+allowed_path_prefixes:
+  - /Default.aspx      # official Book of Modules detail pages
+  - /academic-registry
+  - /policy-hub
+  - /study/undergraduate
+  - /study/postgraduate
+  - /gps
+  - /research/doctoral-college
+  - /global/incoming-students
+  - /fees
+  - /accommodation
+  - /buildings
+  - /library
+  - /cecd
+  - /student-life
+  - /student-affairs
+  - /counselling
+  - /medical-centre
+  - /disability-services
+  - /ctl/
+  - /eatc
+  - /sportsscholarships
+  - /study/scholarships
+  - /media/            # official documents (PDF downloads)
+
+# Never fetch URLs matching these regular expressions.
+exclude_patterns:
+  - "/user(/|$)"
+  - "/login"
+  - "/logout"
+  - "/search"
+  - "/gaeilge/"
+  - "/node/\\d+/edit"
+  - "\\.(jpg|jpeg|png|gif|svg|webp|mp4|mp3|zip|docx?|xlsx?|pptx?|ics)$"
+  - "mailto:"
+  - "tel:"
+  - "/news/"
+  - "/events/"
+
+# URL path keyword -> category (first match wins) for discovered pages
+category_rules:
+  - [study/postgraduate, postgraduate]
+  - [research/doctoral-college, postgraduate]
+  - [/gps, postgraduate]
+  - [student-affairs, student_support]
+  - [/ctl/, student_support]
+  - [/eatc, student_support]
+  - [sportsscholarships, scholarships]
+  - [accommodation, accommodation]
+  - [scholarship, scholarships]
+  - [fees, fees]
+  - [budget-planner, fees]
+  - [visa, international]
+  - [global, international]
+  - [calendar, calendar]
+  - [module-booklet, modules]
+  - [bookofmodules, modules]
+  - [library, library]
+  - [cecd, careers]
+  - [careers, careers]
+  - [campus-maps, campus]
+  - [room-number, campus]
+  - [buildings, campus]
+  - [orientation, registration]
+  - [newstudents, student_support]
+  - [student-supports, student_support]
+  - [policy, regulations]
+  - [academic-regulations, regulations]
+  - [prospectus, undergraduate]
+  - [study/undergraduate, undergraduate]
+  - [academic-registry, registration]
+
+seeds:
+  # ---- Academic information --------------------------------------------
+  - {url: "https://www.ul.ie/academic-registry", category: registration, discover: true}
+  - {url: "https://www.ul.ie/academic-registry/academic-calendars-past-future/academic-calendar-2026/27", category: calendar, year: "2026/27", discover: false}
+  - {url: "https://www.ul.ie/policy-hub/policies", category: regulations, discover: true}
+  - {url: "https://www.bookofmodules.ul.ie/", category: modules, discover: false}
+  - {url: "https://www.ul.ie/study/undergraduate", category: undergraduate, discover: true}
+  - {url: "https://www.ul.ie/academic-registry/orientation", category: registration, discover: true}
+  # ---- International students and finance ------------------------------
+  - {url: "https://www.ul.ie/global/incoming-students/need-know-information/incoming-students-faqs", category: international, discover: true}
+  - {url: "https://www.ul.ie/global/incoming-students/before-you-arrive/visa-and-immigration", category: international, discover: true}
+  - {url: "https://www.ul.ie/study/undergraduate/scholarships", category: scholarships, discover: true}
+  - {url: "https://www.ul.ie/fees", category: fees, discover: true}
+  # ---- Accommodation and campus life -----------------------------------
+  - {url: "https://www.ul.ie/accommodation", category: accommodation, discover: true}
+  - {url: "https://www.ul.ie/accommodation/applying/fees-and-payment-information", category: accommodation, discover: true}
+  - {url: "https://www.ul.ie/academic-registry/newstudents/student-supports-resources", category: student_support, discover: true}
+  - {url: "https://www.ul.ie/buildings/campus-maps", category: campus, discover: false}
+  - {url: "https://www.ul.ie/library", category: library, discover: true}
+  - {url: "https://www.ul.ie/cecd", category: careers, discover: true}
+  # ---- Official PDFs ----------------------------------------------------
+  - {url: "https://www.ul.ie/media/handbook-of-academic-regulations-and-procedures-2026-27/download", category: regulations, year: "2026/27", title: "Handbook of Academic Regulations and Procedures 2026/27"}
+  - {url: "https://www.ul.ie/media/ulundergraduateprospectus202627webaccesible-compressed/download", category: undergraduate, year: "2026/27", title: "UL Undergraduate Prospectus 2026/27"}
+  - {url: "https://www.ul.ie/media/autumn-2026-module-booklet-2/download", category: modules, year: "2026/27", title: "Autumn 2026 Module Booklet"}
+  - {url: "https://www.ul.ie/media/spring-2027-module-booklet/download", category: modules, year: "2026/27", title: "Spring 2027 Module Booklet"}
+  - {url: "https://www.ul.ie/media/budget-planner-2026-27-0/download", category: fees, year: "2026/27", title: "Budget Planner 2026/27"}
+  - {url: "https://www.ul.ie/media/ul-room-number-map-compressed/download", category: campus, title: "UL Room Number Map"}
+
+  # ---- Expanded official services and course catalogue (19 November 2026) ----
+  - {"url": "https://www.ul.ie/student-affairs", "category": "student_support", "title": "Student Affairs", "discover": false}
+  - {"url": "https://www.ul.ie/student-affairs/our-services", "category": "student_support", "title": "Student Support Services", "discover": false}
+  - {"url": "https://www.ul.ie/student-affairs/student-support-and-engagement-hub", "category": "student_support", "title": "Student Support and Engagement Hub", "discover": false}
+  - {"url": "https://www.ul.ie/student-affairs/counselling-service", "category": "student_support", "title": "Student Counselling and Wellbeing Service", "discover": false}
+  - {"url": "https://www.ul.ie/student-affairs/student-health-centre", "category": "student_support", "title": "Student Health Centre", "discover": false}
+  - {"url": "https://www.ul.ie/student-affairs/disability-services", "category": "student_support", "title": "Disability Support Services", "discover": false}
+  - {"url": "https://www.ul.ie/student-affairs/access-office", "category": "student_support", "title": "Access Office", "discover": false}
+  - {"url": "https://www.ul.ie/student-affairs/chaplaincy", "category": "student_support", "title": "Chaplaincy", "discover": false}
+  - {"url": "https://www.ul.ie/student-affairs/seso", "category": "student_support", "title": "Student Engagement and Support Officers", "discover": false}
+  - {"url": "https://www.ul.ie/student-affairs/our-services/ul-student-financial-support-advice-service", "category": "student_support", "title": "Student Financial Support Advice Service", "discover": false}
+  - {"url": "https://www.ul.ie/ctl/writing-centre", "category": "student_support", "title": "Regional Writing Centre", "discover": false}
+  - {"url": "https://www.ul.ie/ctl/mlc", "category": "student_support", "title": "Mathematics Learning Centre", "discover": false}
+  - {"url": "https://www.ul.ie/ctl/slc", "category": "student_support", "title": "Science Learning Centre", "discover": false}
+  - {"url": "https://www.ul.ie/ctl/students/first-seven-weeks", "category": "student_support", "title": "First Seven Weeks", "discover": false}
+  - {"url": "https://www.ul.ie/eatc", "category": "student_support", "title": "Educational Assistive Technology Centre", "discover": false}
+  - {"url": "https://www.ul.ie/study/undergraduate/scholarships/academic-scholarships", "category": "scholarships", "title": "Academic Scholarships", "discover": false}
+  - {"url": "https://www.ul.ie/sportsscholarships", "category": "scholarships", "title": "Sports Scholarships", "discover": false}
+  - {"url": "https://www.ul.ie/study/undergraduate/international-students/scholarships", "category": "scholarships", "title": "International Undergraduate Scholarships", "discover": false}
+  - {"url": "https://www.ul.ie/study/scholarships", "category": "scholarships", "title": "Scholarships and Funding", "discover": false}
+  - {"url": "https://www.ul.ie/buildings", "category": "campus", "title": "Buildings and Estates", "discover": false}
+  - {"url": "https://www.ul.ie/study/undergraduate/alphabetical-list-of-courses", "category": "undergraduate", "title": "UL Alphabetical List of Undergraduate Courses", "discover": false}
+  - {"url": "https://www.ul.ie/study/undergraduate/aeronautical-engineering-be-or-me", "category": "undergraduate", "title": "Aeronautical Engineering - BE or ME", "discover": false}
+  - {"url": "https://www.ul.ie/study/undergraduate/applied-languages-ba", "category": "undergraduate", "title": "Applied Languages - BA", "discover": false}
+  - {"url": "https://www.ul.ie/study/undergraduate/architecture-barch", "category": "undergraduate", "title": "Architecture - BArch", "discover": false}
+  - {"url": "https://www.ul.ie/study/undergraduate/artificial-intelligence-and-machine-learning-bsc-or-msc", "category": "undergraduate", "title": "Artificial Intelligence and Machine Learning - BSc or MSc", "discover": false}
+  - {"url": "https://www.ul.ie/study/undergraduate/arts-ba", "category": "undergraduate", "title": "Arts - BA", "discover": false}
+  - {"url": "https://www.ul.ie/study/undergraduate/digital-culture-and-communications", "category": "undergraduate", "title": "Digital Culture and Communications", "discover": false}
+  - {"url": "https://www.ul.ie/study/undergraduate/economics", "category": "undergraduate", "title": "Economics", "discover": false}
+  - {"url": "https://www.ul.ie/study/undergraduate/english", "category": "undergraduate", "title": "English", "discover": false}
+  - {"url": "https://www.ul.ie/study/undergraduate/french", "category": "undergraduate", "title": "French", "discover": false}
+  - {"url": "https://www.ul.ie/study/undergraduate/gaeilge", "category": "undergraduate", "title": "Gaeilge", "discover": false}
+  - {"url": "https://www.ul.ie/study/undergraduate/geography", "category": "undergraduate", "title": "Geography", "discover": false}
+  - {"url": "https://www.ul.ie/study/undergraduate/german", "category": "undergraduate", "title": "German", "discover": false}
+  - {"url": "https://www.ul.ie/study/undergraduate/history", "category": "undergraduate", "title": "History", "discover": false}
+  - {"url": "https://www.ul.ie/study/undergraduate/japanese", "category": "undergraduate", "title": "Japanese", "discover": false}
+  - {"url": "https://www.ul.ie/study/undergraduate/linguistics-with-tesol", "category": "undergraduate", "title": "Linguistics with TESOL", "discover": false}
+  - {"url": "https://www.ul.ie/study/undergraduate/mathematics", "category": "undergraduate", "title": "Mathematics", "discover": false}
+  - {"url": "https://www.ul.ie/study/undergraduate/music-and-dance", "category": "undergraduate", "title": "Music and Dance", "discover": false}
+  - {"url": "https://www.ul.ie/study/undergraduate/politics-and-international-relations", "category": "undergraduate", "title": "Politics and International Relations", "discover": false}
+  - {"url": "https://www.ul.ie/study/undergraduate/psychology", "category": "undergraduate", "title": "Psychology", "discover": false}
+  - {"url": "https://www.ul.ie/study/undergraduate/public-administration-and-leadership", "category": "undergraduate", "title": "Public Administration and Leadership", "discover": false}
+  - {"url": "https://www.ul.ie/study/undergraduate/sociology", "category": "undergraduate", "title": "Sociology", "discover": false}
+  - {"url": "https://www.ul.ie/study/undergraduate/spanish", "category": "undergraduate", "title": "Spanish", "discover": false}
+  - {"url": "https://www.ul.ie/study/undergraduate/arts-international-advanced-access", "category": "undergraduate", "title": "Arts - International Advanced Access", "discover": false}
+  - {"url": "https://www.ul.ie/study/undergraduate/biological-and-chemical-sciences-common-entry", "category": "undergraduate", "title": "Biological and Chemical Sciences (Common Entry)", "discover": false}
+  - {"url": "https://www.ul.ie/study/undergraduate/biomedical-science-bsc", "category": "undergraduate", "title": "Biomedical Science - BSc", "discover": false}
+  - {"url": "https://www.ul.ie/study/undergraduate/bioscience-bsc", "category": "undergraduate", "title": "Bioscience - BSc", "discover": false}
+  - {"url": "https://www.ul.ie/study/undergraduate/environmental-science-bsc", "category": "undergraduate", "title": "Environmental Science - BSc", "discover": false}
+  - {"url": "https://www.ul.ie/study/undergraduate/industrial-biochemistry-bsc", "category": "undergraduate", "title": "Industrial Biochemistry - BSc", "discover": false}
+  - {"url": "https://www.ul.ie/study/undergraduate/pharmaceutical-and-industrial-chemistry-bsc", "category": "undergraduate", "title": "Pharmaceutical and Industrial Chemistry - BSc", "discover": false}
+  - {"url": "https://www.ul.ie/study/undergraduate/biology-with-physics-chemistry-or-agricultural-science-bsc-education", "category": "undergraduate", "title": "Biology with Physics Chemistry or Agricultural Science - BSc (Education)", "discover": false}
+  - {"url": "https://www.ul.ie/study/undergraduate/business-studies-bbs", "category": "undergraduate", "title": "Business Studies - BBS", "discover": false}
+  - {"url": "https://www.ul.ie/study/undergraduate/chemical-and-biochemical-engineering-be-or-me", "category": "undergraduate", "title": "Chemical and Biochemical Engineering - BE or ME", "discover": false}
+  - {"url": "https://www.ul.ie/study/undergraduate/common-and-civil-law-llb", "category": "undergraduate", "title": "Common and Civil Law - LLB", "discover": false}
+  - {"url": "https://www.ul.ie/study/undergraduate/computer-science-common-entry", "category": "undergraduate", "title": "Computer Science Common Entry", "discover": false}
+  - {"url": "https://www.ul.ie/study/undergraduate/computer-games-development-bsc", "category": "undergraduate", "title": "Computer Games Development - BSc", "discover": false}
+  - {"url": "https://www.ul.ie/study/undergraduate/computer-systems-bsc", "category": "undergraduate", "title": "Computer Systems - BSc", "discover": false}
+  - {"url": "https://www.ul.ie/study/undergraduate/cyber-security-and-it-forensics-bsc", "category": "undergraduate", "title": "Cyber Security and IT Forensics - BSc", "discover": false}
+  - {"url": "https://www.ul.ie/study/undergraduate/construction-management-and-engineering-bsc", "category": "undergraduate", "title": "Construction Management and Engineering - BSc", "discover": false}
+  - {"url": "https://www.ul.ie/study/undergraduate/contemporary-dance-ba", "category": "undergraduate", "title": "Contemporary Dance - BA", "discover": false}
+  - {"url": "https://www.ul.ie/study/undergraduate/criminal-justice-ba", "category": "undergraduate", "title": "Criminal Justice - BA", "discover": false}
+  - {"url": "https://www.ul.ie/study/undergraduate/cybersecurity-practitioner-bsc-apprenticeship", "category": "undergraduate", "title": "Cybersecurity Practitioner - BSc (Apprenticeship)", "discover": false}
+  - {"url": "https://www.ul.ie/study/undergraduate/electrical-engineering-be-or-me", "category": "undergraduate", "title": "Electrical Engineering - BE or ME", "discover": false}
+  - {"url": "https://www.ul.ie/study/undergraduate/electronic-and-computer-engineering-be-or-me", "category": "undergraduate", "title": "Electronic and Computer Engineering - BE or ME", "discover": false}
+  - {"url": "https://www.ul.ie/study/undergraduate/engineering-common-entry", "category": "undergraduate", "title": "Engineering (Common Entry)", "discover": false}
+  - {"url": "https://www.ul.ie/study/undergraduate/biomedical-engineering-be-or-me", "category": "undergraduate", "title": "Biomedical Engineering - BE or ME", "discover": false}
+  - {"url": "https://www.ul.ie/study/undergraduate/civil-engineering-be-or-me", "category": "undergraduate", "title": "Civil Engineering - BE or ME", "discover": false}
+  - {"url": "https://www.ul.ie/study/undergraduate/design-and-manufacture-be", "category": "undergraduate", "title": "Design and Manufacture - BE", "discover": false}
+  - {"url": "https://www.ul.ie/study/undergraduate/digital-mechatronic-engineering-be-or-me", "category": "undergraduate", "title": "Digital Mechatronic Engineering BE or ME", "discover": false}
+  - {"url": "https://www.ul.ie/study/undergraduate/mechanical-engineering-be-or-me", "category": "undergraduate", "title": "Mechanical Engineering - BE or ME", "discover": false}
+  - {"url": "https://www.ul.ie/study/undergraduate/environmental-science-bsc-direct-entry", "category": "undergraduate", "title": "Environmental Science - BSc (Direct entry)", "discover": false}
+  - {"url": "https://www.ul.ie/study/undergraduate/equine-science-bsc", "category": "undergraduate", "title": "Equine Science - BSc", "discover": false}
+  - {"url": "https://www.ul.ie/study/undergraduate/equine-science-certificate-or-diploma", "category": "undergraduate", "title": "Equine Science - Certificate or Diploma", "discover": false}
+  - {"url": "https://www.ul.ie/study/undergraduate/european-studies-ba", "category": "undergraduate", "title": "European Studies - BA", "discover": false}
+  - {"url": "https://www.ul.ie/study/undergraduate/exercise-and-health-fitness-management-bsc", "category": "undergraduate", "title": "Exercise and Health Fitness Management - BSc", "discover": false}
+  - {"url": "https://www.ul.ie/study/undergraduate/financial-mathematics-bsc", "category": "undergraduate", "title": "Financial Mathematics - BSc", "discover": false}
+  - {"url": "https://www.ul.ie/study/undergraduate/food-science-and-health-bsc", "category": "undergraduate", "title": "Food Science and Health - BSc", "discover": false}
+  - {"url": "https://www.ul.ie/study/undergraduate/global-politics-ba", "category": "undergraduate", "title": "Global Politics - BA", "discover": false}
+  - {"url": "https://www.ul.ie/study/undergraduate/graphics-and-construction-technology-bed", "category": "undergraduate", "title": "Graphics and Construction Technology - BEd", "discover": false}
+  - {"url": "https://www.ul.ie/study/undergraduate/graphics-engineering-and-technology-bed", "category": "undergraduate", "title": "Graphics, Engineering and Technology - BEd", "discover": false}
+  - {"url": "https://www.ul.ie/study/undergraduate/immersive-bioscience-and-biotherapeutics-bsc-or-msc", "category": "undergraduate", "title": "Immersive Bioscience and Biotherapeutics - BSc or MSc", "discover": false}
+  - {"url": "https://www.ul.ie/study/undergraduate/immersive-software-engineering-bsc-or-msc", "category": "undergraduate", "title": "Immersive Software Engineering - BSc or MSc", "discover": false}
+  - {"url": "https://www.ul.ie/study/undergraduate/interaction-design-bsc", "category": "undergraduate", "title": "Interaction Design - BSc", "discover": false}
+  - {"url": "https://www.ul.ie/study/undergraduate/international-business-ba", "category": "undergraduate", "title": "International Business - BA", "discover": false}
+  - {"url": "https://www.ul.ie/study/undergraduate/irish-dance-ba", "category": "undergraduate", "title": "Irish Dance - BA", "discover": false}
+  - {"url": "https://www.ul.ie/study/undergraduate/irish-music-ba", "category": "undergraduate", "title": "Irish Music - BA", "discover": false}
+  - {"url": "https://www.ul.ie/study/undergraduate/journalism-and-digital-communication-ba", "category": "undergraduate", "title": "Journalism and Digital Communication - BA", "discover": false}
+  - {"url": "https://www.ul.ie/study/undergraduate/languages-bed", "category": "undergraduate", "title": "Languages - BEd", "discover": false}
+  - {"url": "https://www.ul.ie/study/undergraduate/law-and-accounting-ba", "category": "undergraduate", "title": "Law and Accounting - BA", "discover": false}
+  - {"url": "https://www.ul.ie/study/undergraduate/law-and-cyber-security-llb", "category": "undergraduate", "title": "Law and Cyber Security - LLB", "discover": false}
+  - {"url": "https://www.ul.ie/study/undergraduate/law-plus-llb", "category": "undergraduate", "title": "Law Plus - LLB", "discover": false}
+  - {"url": "https://www.ul.ie/study/undergraduate/mathematics-common-entry", "category": "undergraduate", "title": "Mathematics (Common Entry)", "discover": false}
+  - {"url": "https://www.ul.ie/study/undergraduate/economics-and-mathematics-bsc", "category": "undergraduate", "title": "Economics and Mathematics - BSc", "discover": false}
+  - {"url": "https://www.ul.ie/study/undergraduate/mathematical-sciences-bsc", "category": "undergraduate", "title": "Mathematical Sciences - BSc", "discover": false}
+  - {"url": "https://www.ul.ie/study/undergraduate/mathematics-and-physics-bsc", "category": "undergraduate", "title": "Mathematics and Physics - BSc", "discover": false}
+  - {"url": "https://www.ul.ie/study/undergraduate/mathematics-and-computer-science-bsc-education", "category": "undergraduate", "title": "Mathematics and Computer Science - Bsc (Education)", "discover": false}
+  - {"url": "https://www.ul.ie/study/undergraduate/medicine-graduate-entry", "category": "undergraduate", "title": "Medicine - Graduate Entry", "discover": false}
+  - {"url": "https://www.ul.ie/study/undergraduate/midwifery-bsc", "category": "undergraduate", "title": "Midwifery - BSc", "discover": false}
+  - {"url": "https://www.ul.ie/study/undergraduate/music-ba", "category": "undergraduate", "title": "Music - BA", "discover": false}
+  - {"url": "https://www.ul.ie/study/undergraduate/music-and-dance-certificate", "category": "undergraduate", "title": "Music and Dance - certificate", "discover": false}
+  - {"url": "https://www.ul.ie/study/undergraduate/music-media-and-performance-technology-bsc", "category": "undergraduate", "title": "Music, Media and Performance Technology - BSc", "discover": false}
+  - {"url": "https://www.ul.ie/study/undergraduate/nursing-general-bsc", "category": "undergraduate", "title": "Nursing (General) - BSc", "discover": false}
+  - {"url": "https://www.ul.ie/study/undergraduate/nursing-intellectual-disability-bsc", "category": "undergraduate", "title": "Nursing (Intellectual Disability) - BSc", "discover": false}
+  - {"url": "https://www.ul.ie/study/undergraduate/nursing-mental-health-bsc", "category": "undergraduate", "title": "Nursing (Mental Health) - BSc", "discover": false}
+  - {"url": "https://www.ul.ie/study/undergraduate/occupational-therapy-bsc", "category": "undergraduate", "title": "Occupational Therapy - BSc", "discover": false}
+  - {"url": "https://www.ul.ie/study/undergraduate/paramedic-studies-bsc", "category": "undergraduate", "title": "Paramedic Studies - BSc", "discover": false}
+  - {"url": "https://www.ul.ie/study/undergraduate/paramedic-studies-bsc-practitioner-entry", "category": "undergraduate", "title": "Paramedic Studies - BSc (Practitioner Entry)", "discover": false}
+  - {"url": "https://www.ul.ie/study/undergraduate/physical-education-bsc", "category": "undergraduate", "title": "Physical Education - BSc", "discover": false}
+  - {"url": "https://www.ul.ie/study/undergraduate/physical-science-with-chemistry-and-physics-bsc", "category": "undergraduate", "title": "Physical Science with Chemistry and Physics - BSc", "discover": false}
+  - {"url": "https://www.ul.ie/study/undergraduate/physics-common-entry", "category": "undergraduate", "title": "Physics (Common Entry)", "discover": false}
+  - {"url": "https://www.ul.ie/study/undergraduate/applied-physics-bsc", "category": "undergraduate", "title": "Applied Physics - BSc", "discover": false}
+  - {"url": "https://www.ul.ie/study/undergraduate/physiotherapy-bsc", "category": "undergraduate", "title": "Physiotherapy - BSc", "discover": false}
+  - {"url": "https://www.ul.ie/study/undergraduate/product-design-and-technology-bsc", "category": "undergraduate", "title": "Product Design and Technology - BSc", "discover": false}
+  - {"url": "https://www.ul.ie/study/undergraduate/psychology-bsc", "category": "undergraduate", "title": "Psychology - BSc", "discover": false}
+  - {"url": "https://www.ul.ie/study/undergraduate/psychology-and-sociology-ba", "category": "undergraduate", "title": "Psychology and Sociology - BA", "discover": false}
+  - {"url": "https://www.ul.ie/study/undergraduate/social-sciences-bsc", "category": "undergraduate", "title": "Social Sciences - BSc", "discover": false}
+  - {"url": "https://www.ul.ie/study/undergraduate/speech-and-language-therapy-bsc", "category": "undergraduate", "title": "Speech and Language Therapy - BSc", "discover": false}
+  - {"url": "https://www.ul.ie/study/undergraduate/sport-and-exercise-sciences-bsc", "category": "undergraduate", "title": "Sport and Exercise Sciences - BSc", "discover": false}
+  - {"url": "https://www.ul.ie/study/undergraduate/technology-management-bsc", "category": "undergraduate", "title": "Technology Management - BSc", "discover": false}
+  - {"url": "https://www.ul.ie/study/undergraduate/undergraduate-entry-medicine-bmbs", "category": "undergraduate", "title": "Undergraduate Entry Medicine - BMBS", "discover": false}
+  - {"url": "https://www.ul.ie/study/undergraduate/voice-ba", "category": "undergraduate", "title": "Voice - BA", "discover": false}
+
+  # ---- Postgraduate, professional and research resources ----
+  - {"url": "https://www.ul.ie/study/postgraduate", "title": "UL Postgraduate Programmes", "category": "postgraduate", "discover": false}
+  - {"url": "https://www.ul.ie/study/postgraduate/taught-programmes/alphabetical-list", "title": "A-Z of taught programmes", "category": "postgraduate", "discover": false}
+  - {"url": "https://www.ul.ie/study/postgraduate/professional-flexible", "title": "Overview", "category": "postgraduate", "discover": false}
+  - {"url": "https://www.ul.ie/study/postgraduate/applying", "title": "Applying to UL", "category": "postgraduate", "discover": false}
+  - {"url": "https://www.ul.ie/study/postgraduate/fees-information", "title": "Fees information", "category": "postgraduate", "discover": false}
+  - {"url": "https://www.ul.ie/study/postgraduate/applying/funding-your-programme", "title": "Funding your programme", "category": "postgraduate", "discover": false}
+  - {"url": "https://www.ul.ie/study/postgraduate/applying/funding-your-course/scholarships-and-bursaries", "title": "Scholarships and bursaries", "category": "postgraduate", "discover": false}
+  - {"url": "https://www.ul.ie/study/postgraduate/applying/faqs", "title": "Frequently Asked Questions", "category": "postgraduate", "discover": false}
+  - {"url": "https://www.ul.ie/study/postgraduate/applying/entry-requirements", "title": "Entry requirements", "category": "postgraduate", "discover": false}
+  - {"url": "https://www.ul.ie/study/postgraduate/international-students", "title": "International students", "category": "postgraduate", "discover": false}
+  - {"url": "https://www.ul.ie/study/postgraduate/taught-programmes", "title": "Overview", "category": "postgraduate", "discover": false}
+  - {"url": "https://www.ul.ie/study/postgraduate/taught-programmes/arts-humanities-social-sciences", "title": "Arts, Humanities and Social Sciences", "category": "postgraduate", "discover": false}
+  - {"url": "https://www.ul.ie/study/postgraduate/taught-programmes/education-and-health-sciences", "title": "Education and Health Sciences", "category": "postgraduate", "discover": false}
+  - {"url": "https://www.ul.ie/study/postgraduate/taught-programmes/irish-world-academy-of-music-and-dance", "title": "Irish World Academy", "category": "postgraduate", "discover": false}
+  - {"url": "https://www.ul.ie/study/postgraduate/taught-programmes/kemmy-business-school", "title": "Kemmy Business School programmes", "category": "postgraduate", "discover": false}
+  - {"url": "https://www.ul.ie/study/postgraduate/taught-programmes/science-engineering", "title": "Science and Engineering", "category": "postgraduate", "discover": false}
+  - {"url": "https://www.ul.ie/study/postgraduate/professional-flexible/alphabetical-list", "title": "A-Z of professional and flexible programmes", "category": "postgraduate", "discover": false}
+  - {"url": "https://www.ul.ie/study/postgraduate/professional-flexible/ulwork", "title": "UL@Work", "category": "postgraduate", "discover": false}
+  - {"url": "https://www.ul.ie/study/postgraduate/professional-flexible/springboard-programmes", "title": "Springboard+ programmes", "category": "postgraduate", "discover": false}
+  - {"url": "https://www.ul.ie/study/postgraduate/professional-flexible/executive-apprenticeships", "title": "Executive Apprenticeships", "category": "postgraduate", "discover": false}
+  - {"url": "https://www.ul.ie/study/postgraduate/professional-flexible/flexible-masters", "title": "Flexible Masters pathways", "category": "postgraduate", "discover": false}
+  - {"url": "https://www.ul.ie/study/postgraduate/why-ul/spring-starts", "title": "Spring starts", "category": "postgraduate", "discover": false}
+  - {"url": "https://www.ul.ie/study/postgraduate/professional-flexible/arts-humanities-social-sciences", "title": "Arts, Humanities and Social Sciences programmes", "category": "postgraduate", "discover": false}
+  - {"url": "https://www.ul.ie/study/postgraduate/professional-flexible/education-and-health-sciences", "title": "Education and Health Sciences programmes", "category": "postgraduate", "discover": false}
+  - {"url": "https://www.ul.ie/study/postgraduate/professional-flexible/kemmy-business-school", "title": "Kemmy Business School programmes", "category": "postgraduate", "discover": false}
+  - {"url": "https://www.ul.ie/study/postgraduate/professional-flexible/science-engineering", "title": "Science and Engineering programmes", "category": "postgraduate", "discover": false}
+  - {"url": "https://www.ul.ie/study/postgraduate/why-ul", "title": "Overview", "category": "postgraduate", "discover": false}
+  - {"url": "https://www.ul.ie/study/postgraduate/why-ul/prospectus", "title": "Download Prospectus", "category": "postgraduate", "discover": false}
+  - {"url": "https://www.ul.ie/study/postgraduate/why-ul/facilities", "title": "Facilities", "category": "postgraduate", "discover": false}
+  - {"url": "https://www.ul.ie/study/postgraduate/why-ul/student-supports", "title": "Student supports", "category": "postgraduate", "discover": false}
+  - {"url": "https://www.ul.ie/study/postgraduate/moving-to-limerick/accommodation", "title": "Accommodation", "category": "postgraduate", "discover": false}
+  - {"url": "https://www.ul.ie/study/postgraduate/new-students", "title": "New students", "category": "postgraduate", "discover": false}
+  - {"url": "https://www.ul.ie/study/postgraduate/taught-programmes/kemmy-business-school-taught-courses", "title": "Kemmy Business School", "category": "postgraduate", "discover": false}
+  - {"url": "https://www.ul.ie/study/postgraduate/applying/funding-your-course", "title": "Funding your programme", "category": "postgraduate", "discover": false}
+  - {"url": "https://www.ul.ie/study/postgraduate/artificial-intelligence-certificate", "title": "Artificial Intelligence - Certificate", "category": "postgraduate", "discover": false}
+  - {"url": "https://www.ul.ie/study/postgraduate/artificial-intelligence-msc-online", "title": "Artificial Intelligence - MSc (Online)", "category": "postgraduate", "discover": false}
+  - {"url": "https://www.ul.ie/study/postgraduate/artificial-intelligence-and-machine-learning-msc", "title": "Artificial Intelligence and Machine Learning - MSc", "category": "postgraduate", "discover": false}
+  - {"url": "https://www.ul.ie/study/postgraduate/artificial-intelligence-for-computer-vision-professional-diploma", "title": "Artificial Intelligence for Computer Vision - Professional Diploma", "category": "postgraduate", "discover": false}
+  - {"url": "https://www.ul.ie/study/postgraduate/business-analytics-msc", "title": "Business Analytics - MSc", "category": "postgraduate", "discover": false}
+  - {"url": "https://www.ul.ie/study/postgraduate/computer-vision-and-artificial-intelligence-meng", "title": "Computer Vision and Artificial Intelligence - MEng", "category": "postgraduate", "discover": false}
+  - {"url": "https://www.ul.ie/study/postgraduate/cyber-security-meng", "title": "Cyber Security - MEng", "category": "postgraduate", "discover": false}
+  - {"url": "https://www.ul.ie/study/postgraduate/data-science-and-statistical-learning-msc", "title": "Data Science and Statistical Learning - MSc", "category": "postgraduate", "discover": false}
+  - {"url": "https://www.ul.ie/study/postgraduate/machine-learning-for-finance-msc-online", "title": "Machine Learning for Finance - MSc (Online)", "category": "postgraduate", "discover": false}
+  - {"url": "https://www.ul.ie/study/postgraduate/mathematical-modelling-msc", "title": "Mathematical Modelling - MSc", "category": "postgraduate", "discover": false}
+  - {"url": "https://www.ul.ie/study/postgraduate/software-development-international-systems-msc", "title": "Software Development: International Systems - MSc", "category": "postgraduate", "discover": false}
+  - {"url": "https://www.ul.ie/study/postgraduate/software-engineering-msc", "title": "Software Engineering - MSc", "category": "postgraduate", "discover": false}
+  - {"url": "https://www.ul.ie/study/postgraduate/accounting-msc", "title": "Accounting - MSc", "category": "postgraduate", "discover": false}
+  - {"url": "https://www.ul.ie/study/postgraduate/community-research-ma", "title": "Community Research - MA", "category": "postgraduate", "discover": false}
+  - {"url": "https://www.ul.ie/study/postgraduate/education-school-leadership-med", "title": "Education - School Leadership - MEd", "category": "postgraduate", "discover": false}
+  - {"url": "https://www.ul.ie/study/postgraduate/health-and-safety-professional-diploma", "title": "Health and Safety - Professional Diploma", "category": "postgraduate", "discover": false}
+  - {"url": "https://www.ul.ie/study/postgraduate/international-commercial-law-llm", "title": "International Commercial Law - LLM", "category": "postgraduate", "discover": false}
+  - {"url": "https://www.ul.ie/study/postgraduate/management-diploma", "title": "Management - Diploma", "category": "postgraduate", "discover": false}
+  - {"url": "https://www.ul.ie/study/postgraduate/nursing-palliative-care-msc", "title": "Nursing (Palliative Care) - MSc", "category": "postgraduate", "discover": false}
+  - {"url": "https://www.ul.ie/study/postgraduate/project-management-professional-diploma-online", "title": "Project Management - Professional Diploma (Online)", "category": "postgraduate", "discover": false}
+  - {"url": "https://www.ul.ie/study/postgraduate/advanced-clinical-practice-postgraduate-certificate", "title": "Advanced Clinical Practice - Postgraduate Certificate", "category": "postgraduate", "discover": false}
+  - {"url": "https://www.ul.ie/study/postgraduate/applied-policing-and-criminal-justice-ba", "title": "Applied Policing and Criminal Justice - BA", "category": "postgraduate", "discover": false}
+  - {"url": "https://www.ul.ie/study/postgraduate/community-engagement-professional-diploma", "title": "Community Engagement - Professional Diploma", "category": "postgraduate", "discover": false}
+  - {"url": "https://www.ul.ie/study/postgraduate/drug-and-alcohol-studies-diploma-online", "title": "Drug and alcohol studies - Diploma (online)", "category": "postgraduate", "discover": false}
+  - {"url": "https://www.ul.ie/study/postgraduate/functional-foods-and-product-development-msc", "title": "Functional Foods and Product Development - MSc", "category": "postgraduate", "discover": false}
+  - {"url": "https://www.ul.ie/study/postgraduate/human-performance-and-innovation-professional-doctorate", "title": "Human Performance and Innovation - Professional Doctorate", "category": "postgraduate", "discover": false}
+  - {"url": "https://www.ul.ie/study/postgraduate/local-history-certificate", "title": "Local History - Certificate", "category": "postgraduate", "discover": false}
+  - {"url": "https://www.ul.ie/study/postgraduate/nursing-older-person-msc", "title": "Nursing (Older Person) - MSc", "category": "postgraduate", "discover": false}
+  - {"url": "https://www.ul.ie/study/postgraduate/posture-seating-and-wheelchair-mobility-across-the-life-course-postgraduate-certificate", "title": "Posture, Seating and Wheelchair Mobility Across the Life Course - Postgraduate Certificate", "category": "postgraduate", "discover": false}
+  - {"url": "https://www.ul.ie/study/postgraduate/quality-management-six-sigma-professional-diploma", "title": "Quality Management, Six Sigma - Professional Diploma", "category": "postgraduate", "discover": false}
+  - {"url": "https://www.ul.ie/research/doctoral-college/postgraduate-research-programmes", "title": "Postgraduate Research Programmes", "category": "postgraduate", "discover": false}
+
+  # Public, server-rendered Book of Modules detail pages (not the empty search page).
+  - {url: "https://www.bookofmodules.ul.ie/Default.aspx?ModuleCodeParameter=%7CBS6005%7C", category: modules, title: "BS6005 - Executive MBA Project B", year: "2026/27", discover: false}
+  - {url: "https://www.bookofmodules.ul.ie/Default.aspx?ModuleCodeParameter=%7CCS4012%7C", category: modules, title: "CS4012 - Representation and Modelling", year: "2026/27", discover: false}
+
+  - {url: "https://www.bookofmodules.ul.ie/Default.aspx?ModuleCodeParameter=%7CBY4001%7C", category: modules, title: "BY4001 - Biology 1", year: "2026/27", discover: false}

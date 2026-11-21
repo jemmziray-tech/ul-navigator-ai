@@ -1,0 +1,23 @@
+# Render Blueprint for the FastAPI backend. In Render: New > Blueprint, and set the
+# blueprint path to deploy/render.yaml. Secrets are entered in the dashboard (sync: false).
+services:
+  - type: web
+    name: ul-navigator-api
+    runtime: docker
+    dockerfilePath: ./backend/Dockerfile
+    dockerContext: .
+    plan: standard          # torch + models need >= 2 GB RAM; the free 512 MB plan is too small
+    healthCheckPath: /health
+    disk: { name: ul-data, mountPath: /app/data, sizeGB: 5 }   # persists FAISS index + SQLite
+    envVars:
+      - { key: APP_ENV, value: production }
+      - { key: DATA_DIR, value: /app/data }
+      - { key: TRUST_PROXY_HEADERS, value: "true" }
+      - { key: EMBEDDING_DEVICE, value: cpu }
+      - { key: CORS_ORIGINS, sync: false }        # e.g. https://ul-navigator.vercel.app
+      - { key: GEMINI_API_KEY, sync: false }
+      - { key: GEMINI_MODEL, value: gemini-3.8-flash }
+      - { key: ADMIN_PASSWORD_HASH, sync: false }
+      - { key: JWT_SECRET, generateValue: true }
+      - { key: CRAWL_USER_AGENT, sync: false }
+      # Optional managed Postgres: add a database and set DATABASE_URL from it.

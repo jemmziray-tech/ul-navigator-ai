@@ -1,0 +1,6 @@
+# Embeddings + cross-encoder reranking. Install PyTorch FIRST for your hardware:
+#   NVIDIA RTX 50-series (Blackwell, e.g. RTX 5060): CUDA 12.8+ build
+#     pip install torch --index-url https://download.pytorch.org/whl/cu128
+#   CPU only (Docker / Render):
+#     pip install torch --index-url https://download.pytorch.org/whl/cpu
+sentence-transformers==6.3.0

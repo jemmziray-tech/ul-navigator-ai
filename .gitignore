@@ -1,0 +1,52 @@
+# secrets
+.env
+.env.*
+!.env.example
+frontend/.env.local
+# generated data, indexes, raw downloads, uploads, logs (never commit)
+/data/
+/data_demo/
+*.index
+evaluation/results/*
+!evaluation/results/README.md
+# python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.pytest_cache/
+*.egg-info/
+# node / next
+node_modules/
+frontend/.next/
+frontend/out/
+frontend/test-results/
+frontend/playwright-report/
+frontend/*.tsbuildinfo
+frontend/next-env.d.ts
+# os / editors
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# deployment staging
+build/
+
+# Local deployment artifacts and private state
+work/
+build/
+.vercel/
+*.log
+*_log.txt
+*.db
+*.db-*
+*.sqlite*
+*.pem
+*.key
+*.p12
+*.pfx
+*.tar.gz
+.env*
+!.env.example
+**/runtime-env.yaml

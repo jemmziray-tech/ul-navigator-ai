@@ -1,0 +1,5 @@
+# Optional extras
+psycopg[binary]==3.3.9     # PostgreSQL instead of SQLite (DATABASE_URL=postgresql://...)
+scrapy==2.20.0             # large-scale URL discovery (python -m ul_ingest.scrapy_discovery)
+playwright==1.65.2         # render JS-heavy pages (CRAWL_USE_PLAYWRIGHT=true; then `playwright install chromium`)
+sentry-sdk                 # error monitoring (SENTRY_DSN)
