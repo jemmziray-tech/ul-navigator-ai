@@ -12,10 +12,11 @@ type Props = {
   generatedAt: string;
   coverage: { courses: number; requirements: number; courseCodes: number };
   collection: { at: string; collected: number; discovered: number };
+  modules: { catalogueCourses: number; structuredCourses: number; semesterSections: number; moduleListings: number; generatedAt: string };
 };
 const CORE_TOPICS = ["undergraduate", "postgraduate", "fees", "regulations", "accommodation", "international", "library", "student_support", "scholarships", "careers", "modules", "calendar"];
 
-export function KnowledgeHealth({ generatedAt, coverage, collection }: Props) {
+export function KnowledgeHealth({ generatedAt, coverage, collection, modules }: Props) {
   const [stats, setStats] = useState<Stats | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
@@ -48,6 +49,22 @@ export function KnowledgeHealth({ generatedAt, coverage, collection }: Props) {
       {stats && <p className="mt-4 text-xs text-muted">{gaps.length} {gaps.length === 1 ? "topic" : "topics"} flagged for review. A larger source count does not guarantee complete coverage.</p>}</Card></section>
 
       <section aria-labelledby="collection-heading"><Card className="h-full p-6"><Badge>Collection snapshot</Badge><h2 id="collection-heading" className="mt-4 font-display text-2xl font-semibold">A growing library,<br />with clear boundaries.</h2><p className="mt-3 text-sm leading-relaxed text-muted">The public-site collection is separate from what has been added to chat. Pages are checked, extracted and imported in batches.</p><dl className="mt-6 space-y-4"><div className="flex items-center justify-between border-b border-border pb-4"><dt className="text-sm text-muted">Discovered URLs</dt><dd className="text-2xl font-semibold tabular-nums">{collection.discovered.toLocaleString()}</dd></div><div className="flex items-center justify-between"><dt className="text-sm text-muted">Pages with saved text</dt><dd className="text-2xl font-semibold tabular-nums">{collection.collected.toLocaleString()}</dd></div></dl><div className="mt-5 h-2 overflow-hidden rounded-full bg-surface-2" role="progressbar" aria-label="Saved text among discovered URLs at snapshot time" aria-valuenow={Math.round(proportion)} aria-valuemin={0} aria-valuemax={100}><div className="h-full rounded-full bg-emerald" style={{ width: `${proportion}%` }} /></div><p className="mt-2 text-xs text-muted">{proportion.toFixed(1)}% of this discovered queue had saved text at snapshot time.</p><p className="mt-5 flex items-start gap-2 rounded-xl bg-surface-2 p-3 text-xs leading-relaxed text-muted"><Clock3 className="mt-0.5 h-3.5 w-3.5 shrink-0" />Recorded {sourceDate(collection.at)}. This snapshot is not a live crawler status or a claim that all UL information has been collected.</p><p className="mt-4 text-xs leading-relaxed text-muted">Collection covers supported public pages and documents. Inaccessible pages, private services, unsupported files and text requiring OCR can leave gaps.</p></Card></section></div>
+
+    <section className="mt-9" aria-labelledby="modules-heading">
+      <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
+        <div><p className="text-xs uppercase tracking-wider text-muted">Programme and semester coverage</p><h2 id="modules-heading" className="mt-1 font-display text-3xl font-semibold">See what is mapped.</h2></div>
+        <Button asChild variant="outline"><Link href="/curricula">Browse semester maps<ArrowRight className="h-4 w-4" /></Link></Button>
+      </div>
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        {[
+          { title: "Programmes with maps", count: modules.structuredCourses, detail: `Of ${modules.catalogueCourses} checked catalogue records` },
+          { title: "Year and semester sections", count: modules.semesterSections, detail: "Includes separate published pathways" },
+          { title: "Coded module listings", count: modules.moduleListings, detail: "Listings may repeat across programmes" },
+          { title: "Maps still missing", count: Math.max(0, modules.catalogueCourses - modules.structuredCourses), detail: "No structured semester map captured" },
+        ].map(item => <Card key={item.title} className="p-5"><h3 className="text-sm font-semibold">{item.title}</h3><p className="mt-3 font-display text-4xl font-semibold tabular-nums">{item.count.toLocaleString()}</p><p className="mt-3 text-xs leading-relaxed text-muted">{item.detail}</p></Card>)}
+      </div>
+      <p className="mt-3 text-xs leading-relaxed text-muted">Snapshot updated {sourceDate(modules.generatedAt)}. These are published curriculum listings, not a count of fully indexed module descriptions or a personalised registration plan. Electives, pathways and academic-year applicability must be checked against the linked official source.</p>
+    </section>
 
     <section className="mt-9" aria-labelledby="quality-heading"><div className="mb-5 flex flex-wrap items-center justify-between gap-3"><div><p className="text-xs uppercase tracking-wider text-muted">Behind the course finder</p><h2 id="quality-heading" className="mt-1 font-display text-3xl font-semibold">Useful facts. Visible gaps.</h2></div><Button asChild variant="outline"><Link href="/courses">Explore programmes<ArrowRight className="h-4 w-4" /></Link></Button></div><div className="grid gap-4 md:grid-cols-3">{[
       { icon: BookOpenCheck, title: "Programme snapshots", count: coverage.courses, total: coverage.courses, body: "Programmes with structured official course information. This is a collected selection, not UL’s full directory." },

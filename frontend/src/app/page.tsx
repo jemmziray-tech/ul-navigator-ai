@@ -111,7 +111,7 @@ export default function Landing() {
           <div className="relative mx-auto max-w-4xl px-4 pb-14 pt-14 text-center sm:px-6 sm:pt-20">
             <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
               <UniversityResourceMark />
-              <p className="mt-4 text-xs font-medium uppercase tracking-widest text-emerald">Public beta · Your independent student companion</p>
+              <p className="mt-4 text-xs font-medium uppercase tracking-widest text-emerald">Courses. Modules. Answers you can check.</p>
             </motion.div>
             <motion.h1
               initial={{ opacity: 0, y: 12 }}

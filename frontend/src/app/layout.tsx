@@ -8,8 +8,11 @@ import { Providers } from "./providers";
 export const metadata: Metadata = {
   title: { default: "UL Navigator AI", template: "%s · UL Navigator AI" },
   description:
-    "An independent, student-built AI assistant that answers questions about the University of Limerick using official, cited sources.",
-  authors: [{ name: "John Elifuraha Mziray" }],
+    "Explore University of Limerick courses, semester modules and student services with an independent AI assistant grounded in official sources.",
+  metadataBase: new URL("https://ul-navigator-ai.vercel.app"),
+  applicationName: "UL Navigator AI",
+  openGraph: { type: "website", siteName: "UL Navigator AI", title: "UL Navigator AI", description: "Courses, modules and answers grounded in official UL sources." },
+  twitter: { card: "summary", title: "UL Navigator AI", description: "Courses, modules and answers grounded in official UL sources." },
   robots: { index: true, follow: true },
 };
 

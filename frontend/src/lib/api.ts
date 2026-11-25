@@ -148,20 +148,7 @@ export async function streamChat(
   }
 }
 
-export function getClientId(): string {
-  if (typeof window === "undefined") return "server-render";
-  const KEY = "uln_client_id";
-  try {
-    let id = localStorage.getItem(KEY);
-    if (!id) {
-      id = (crypto.randomUUID?.() || Math.random().toString(36).slice(2) + Date.now().toString(36)).replace(/[^A-Za-z0-9_-]/g, "");
-      localStorage.setItem(KEY, id);
-    }
-    return id;
-  } catch {
-    return "anonymous-session";
-  }
-}
+export { getClientId } from "./client-identity";
 
 export const CATEGORY_LABELS: Record<string, string> = {
   qca_grading: "QCA & grading",

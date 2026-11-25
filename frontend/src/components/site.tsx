@@ -10,7 +10,7 @@ import { cn } from "@/lib/utils";
 import { Button } from "./ui";
 
 export const DISCLAIMER =
-  "UL Navigator AI is an independent student-led project and is not an official University of Limerick service.";
+  "UL Navigator AI is an independent information service and is not an official University of Limerick service.";
 
 /** Official source identity, kept separate from the independent product's own mark. */
 export function UniversityResourceMark({ compact = false }: { compact?: boolean }) {
@@ -18,7 +18,7 @@ export function UniversityResourceMark({ compact = false }: { compact?: boolean 
     {/* The official site's SVG is served locally, preserving its original paths and proportions. */}
     {/* eslint-disable-next-line @next/next/no-img-element */}
     <img src="/ul-logo.svg" width="148" height="68" alt="University of Limerick" className={compact ? "h-10 w-auto" : "h-14 w-auto"} />
-    {!compact && <span className="border-l border-[#005C46]/15 pl-3 text-[11px] leading-relaxed text-[#005C46]">Official UL resources<br /><span className="font-semibold">Independent student companion</span></span>}
+    {!compact && <span className="border-l border-[#005C46]/15 pl-3 text-[11px] leading-relaxed text-[#005C46]">Official UL resources<br /><span className="font-semibold">Independent information service</span></span>}
   </a>;
 }
 
@@ -74,6 +74,12 @@ export function SiteHeader() {
   const path = usePathname();
   const [open, setOpen] = useState(false);
   useEffect(() => setOpen(false), [path]);
+  useEffect(() => {
+    if (!open) return;
+    const close = (event: KeyboardEvent) => { if (event.key === "Escape") { setOpen(false); document.getElementById("navigation-toggle")?.focus(); } };
+    window.addEventListener("keydown", close);
+    return () => window.removeEventListener("keydown", close);
+  }, [open]);
   return (
     <header className="sticky top-0 z-40 border-b border-border/70 bg-background/80 backdrop-blur-md">
       <a href="#main" className="sr-only focus:not-sr-only focus:absolute focus:left-3 focus:top-3 focus:rounded-lg focus:bg-surface focus:px-3 focus:py-2">
@@ -88,6 +94,7 @@ export function SiteHeader() {
             <Link
               key={n.href}
               href={n.href}
+              aria-current={path === n.href ? "page" : undefined}
               className={cn(
                 "rounded-lg px-3 py-2 text-sm text-muted transition-colors hover:text-foreground",
                 path === n.href && "text-foreground font-medium",
@@ -102,7 +109,7 @@ export function SiteHeader() {
           <Button asChild size="sm" className="hidden sm:inline-flex">
             <Link href="/chat">Start chatting</Link>
           </Button>
-          <Button variant="ghost" size="icon" className="md:hidden" aria-label="Open menu" aria-expanded={open} onClick={() => setOpen((o) => !o)}>
+          <Button variant="ghost" size="icon" className="md:hidden" id="navigation-toggle" aria-label={open ? "Close menu" : "Open menu"} aria-controls="mobile-navigation" aria-expanded={open} onClick={() => setOpen((o) => !o)}>
             {open ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
           </Button>
         </div>
@@ -114,11 +121,12 @@ export function SiteHeader() {
             animate={{ height: "auto", opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
             className="overflow-hidden border-t border-border md:hidden"
+            id="mobile-navigation"
             aria-label="Mobile"
           >
             <div className="flex flex-col p-3">
               {NAV.map((n) => (
-                <Link key={n.href} href={n.href} className="rounded-lg px-3 py-3 text-sm hover:bg-surface-2">
+                <Link key={n.href} href={n.href} aria-current={path === n.href ? "page" : undefined} className="rounded-lg px-3 py-3 text-sm hover:bg-surface-2">
                   {n.label}
                 </Link>
               ))}
@@ -140,8 +148,7 @@ export function SiteFooter() {
           <p>Answers are generated from public UL web pages and documents. Always verify important information with the relevant UL office.</p>
         </div>
         <div className="space-y-1">
-          <p className="font-medium text-foreground">Created by John Elifuraha Mziray</p>
-          <p>BSc Artificial Intelligence &amp; Machine Learning, University of Limerick</p>
+          <p className="font-medium text-foreground">Explore UL Navigator</p>
           <div className="flex flex-wrap gap-4 pt-2">
             <Link href="/courses" className="hover:text-foreground">Courses</Link>
             <Link href="/knowledge-health" className="hover:text-foreground">Coverage</Link>
@@ -151,7 +158,6 @@ export function SiteFooter() {
             <Link href="/curricula" className="hover:text-foreground">Programme modules</Link>
             <Link href="/about" className="hover:text-foreground">About</Link>
             <Link href="/privacy" className="hover:text-foreground">Privacy</Link>
-            <Link href="/admin" className="hover:text-foreground">Admin</Link>
           </div>
         </div>
       </div>
