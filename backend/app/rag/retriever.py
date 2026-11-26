@@ -78,6 +78,7 @@ def retrieve(index: KnowledgeIndex, query: str, *, top_k: int | None = None,
              categories: list[str] | None = None, academic_year: str | None = None,
              year_is_explicit: bool = False, boost_categories: list[str] | None = None,
              module_codes: list[str] | None = None) -> RetrievalResult:
+    from .exam_schedule import exam_timing
     s = get_settings()
     t0 = time.perf_counter()
     top_k = top_k or s.retrieval_top_k
@@ -92,7 +93,7 @@ def retrieve(index: KnowledgeIndex, query: str, *, top_k: int | None = None,
     fused = reciprocal_rank_fusion([[i for i, _ in sem], [i for i, _ in kw]], k=s.rrf_k)
     directories = {rec.id for rec in directory_records(index, query)}
     curriculum = {rec.id for rec in curriculum_records(index, query)}
-    descriptors = {r.id for r in index.records.values() if module_codes
+    descriptors = {r.id for r in index.records.values() if module_codes and not exam_timing(query)
                    and r.url.startswith(("https://bookofmodules.ul.ie/", "https://www.bookofmodules.ul.ie/"))
                    and any(r.title.upper().startswith(c.upper() + " —") for c in module_codes)}
     for cid in descriptors:

@@ -14,7 +14,7 @@ _MARKER_RE = re.compile(r"\[S(\d+)\]")
 _FIGURE_RE = re.compile(
     r"(€\s?\d[\d,]*(?:\.\d+)?|\d[\d,]*(?:\.\d+)?\s?(?:%|percent|euro|EUR)|"
     r"\b\d{1,2}(?:st|nd|rd|th)?\s+(?:January|February|March|April|May|June|July|August|"
-    r"September|October|November|December)\b|\b\d\.\d{1,2}\b|\b\d{1,2}/\d{1,2}/\d{2,4}\b)",
+    r"September|October|November|December)\b(?:\s+\d{4})?|\b\d{4}-\d{2}-\d{2}\b|\b\d\.\d{1,2}\b|\b\d{1,2}/\d{1,2}/\d{2,4}\b)",
     re.IGNORECASE)
 
 

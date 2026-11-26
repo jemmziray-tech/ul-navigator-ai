@@ -34,6 +34,10 @@ def _budget_cost(request: Request, req: ChatRequest):
     if analysis.intent in {"empty", "smalltalk", "injection", "social"}:
         request.state.generation_cost = 0
         return
+    from ..rag.exam_schedule import exam_timing
+    if analysis.module_codes and exam_timing(req.question):
+        request.state.generation_cost = 0
+        return
     history = []
     if req.conversation_id and get_settings().store_conversations:
         with session_scope() as db:

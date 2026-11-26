@@ -8,6 +8,7 @@ from dataclasses import dataclass, field
 
 from ..config import get_settings
 from .text import MODULE_CODE_RE, find_academic_years
+from .exam_schedule import exam_timing
 
 CATEGORIES: dict[str, list[str]] = {
     "qca_grading": ["qca", "grade", "grading", "gpa", "quality credit", "qpv", "honours",
@@ -182,6 +183,9 @@ def analyse(query: str, has_history: bool = False) -> QueryAnalysis:
     if a.module_codes and "modules" not in a.categories:
         a.categories.insert(0, "modules")
         a.category = "modules"
+    if exam_timing(q):
+        a.category = "calendar"
+        a.categories = ["calendar"] + [c for c in a.categories if c != "calendar"]
 
     for cat in a.categories[:2]:
         if any(kw in low for kw in HIGH_STAKES.get(cat, [])):

@@ -16,6 +16,7 @@ from ..config import get_settings
 from . import prompts
 from .clarification import clarify
 from .citations import make_citation, validate
+from .exam_schedule import exam_timing, module_exam_guidance
 from .classifier import (OFFICIAL_CONTACTS, SWAHILI_SMALLTALK_RE, QueryAnalysis, analyse, expand_query,
                          heuristic_rewrite)
 from .knowledge_index import KnowledgeIndex, get_index
@@ -26,7 +27,7 @@ from .text import tokenize
 log = logging.getLogger(__name__)
 
 SMALLTALK_ANSWER = (
-    "Hi! I'm **UL Navigator AI**, an independent student-built assistant for University of "
+    "Hi! I'm **UL Navigator AI**, an independent assistant for University of "
     "Limerick information. I answer from official UL web pages and documents and show you the "
     "source for every fact.\n\nYou can ask me about **QCA and grading, registration, "
     "accommodation, fees, scholarships, international student requirements, academic calendars, "
@@ -36,7 +37,7 @@ SWAHILI_SMALLTALK_ANSWER = (
     "Habari! Karibu **UL Navigator AI**. Ninaweza kukusaidia kupata taarifa kuhusu "
     "University of Limerick, kama ada, malazi, masomo na kalenda ya chuo. "
     "Una swali gani?\n\n"
-    "Huu ni mradi huru wa mwanafunzi, si huduma rasmi ya chuo.")
+    "Hii ni huduma huru ya taarifa, si huduma rasmi ya chuo.")
 
 INJECTION_ANSWER = (
     "I can't follow instructions that try to change how I work or reveal internal settings. "
@@ -138,11 +139,13 @@ def _best_sentences(text: str, query: str, max_words: int = 70) -> str:
     return " ".join(words[:max_words]) + ("…" if len(words) > max_words else "")
 
 
-def extractive_answer(hits: list[Hit], query: str, unavailable: bool = False) -> str:
+def extractive_answer(hits: list[Hit], query: str, unavailable: bool = False, verification_failed: bool = False) -> str:
     notice = ("_Generative answers are temporarily unavailable, so here are the most relevant "
               "passages from official UL sources:_" if unavailable else
               "_Generative answers are switched off (no Gemini API key configured), so here are "
               "the most relevant passages from official UL sources:_")
+    if verification_failed:
+        notice = "_I couldn't verify the generated details, so here are relevant passages from official UL sources:_"
     lines = [notice, ""]
     for i, h in enumerate(hits[:3], start=1):
         label = h.record.title + (f" — {h.record.section}" if h.record.section else "")
@@ -232,6 +235,12 @@ def run_stream(question: str, history: list[dict] | None = None,
 
     yield {"type": "status", "stage": "retrieving"}
     retrieval_query = _rewrite(question, history, a)
+    schedule = analyse(retrieval_query)
+    if exam_timing(retrieval_query) and schedule.module_codes:
+        yield done(module_exam_guidance(schedule.module_codes), [], [], "system", False, retrieval_query,
+                   ["Where can I check the general examination period?", "How do I report an exam timetable clash?"],
+                   ["module_exam_timetable_required"])
+        return
     index = index or get_index()
     rr = retrieve(index, expand_query(retrieval_query), categories=categories,
                   academic_year=a.academic_year, year_is_explicit=a.year_is_explicit,
@@ -273,7 +282,6 @@ def run_stream(question: str, history: list[dict] | None = None,
         try:
             for delta in llm.stream(prompt, prompts.SYSTEM_PROMPT):
                 raw += delta
-                yield {"type": "token", "text": delta}
         except LLMUnavailable as exc:
             log.error("generation failed, falling back to extractive",
                       extra={"extra_fields": {"error": str(exc)}})
@@ -284,6 +292,16 @@ def run_stream(question: str, history: list[dict] | None = None,
             yield {"type": "token", "text": raw}
 
     v = validate(raw, sources)
+    if mode == "generative" and v.unverified_figures:
+        # A warning does not make an unsupported date or amount safe to display.
+        flags.append("unverified_generation_replaced")
+        if v.invalid_markers:
+            flags.append("invalid_citations_removed")
+        mode = "extractive"
+        raw = extractive_answer(relevant, retrieval_query, verification_failed=True)
+        v = validate(raw, sources)
+        yield {"type": "reset"}
+        yield {"type": "token", "text": raw}
     if mode == "generative" and not v.has_citations:
         # An uncited or cut-off generated answer is not a usable final answer.
         # Replace it with source excerpts instead of displaying unsupported claims.
@@ -316,6 +334,9 @@ def run_stream(question: str, history: list[dict] | None = None,
         if course:
             answer += f"\n\n[Browse the published semester map](/curricula?course={course['id']})"
 
+    if mode == "generative":
+        # The client paces verified text progressively; do not expose unvalidated model deltas.
+        yield {"type": "token", "text": answer}
     yield done(answer, v.citations, public_sources, mode, True, retrieval_query,
                _follow_ups(a, relevant, question), flags, rr.elapsed_ms, rr.top_score, debug)
 

@@ -3,7 +3,7 @@ from __future__ import annotations
 
 import re
 
-SYSTEM_PROMPT = """You are UL Navigator AI, an independent, student-built assistant that helps \
+SYSTEM_PROMPT = """You are UL Navigator AI, an independent assistant that helps \
 prospective, international and current students find information about the University of \
 Limerick (UL). You are NOT an official UL service.
 
