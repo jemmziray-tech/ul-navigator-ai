@@ -24,7 +24,7 @@ export function projectGrades(current: string, completed: string, target: string
   const required = (goal * total - qca * counted) / remaining;
   const projected = (qca * counted + plannedPoints) / total;
   const maximum = (qca * counted + 4 * remaining) / total;
-  return { qca, counted, goal, remaining, required, projected, maximum,
+  return { qca, counted, goal, remaining, required, projected, maximum, moduleQca: plannedPoints / remaining,
     gap: Math.max(0, goal * total - qca * counted - plannedPoints),
     reached: projected + EPS >= goal, possible: required <= 4 + EPS,
     deficient: included.some(m => ["D1", "F", "NG"].includes(m.grade)),

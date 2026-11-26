@@ -15,6 +15,8 @@ def test_non_schedule_queries_are_not_hijacked(query):
 
 def test_module_exam_dates_never_infer_from_descriptor_or_history(fresh_env, monkeypatch):
     from app.rag import pipeline
+    from app.rag import exam_schedule
+    monkeypatch.setattr(exam_schedule, "lookup_exam", lambda *args: {"status":"unavailable", "note":"Timetable unavailable.", "session":None})
     monkeypatch.setattr(pipeline, "get_llm", lambda: (_ for _ in ()).throw(AssertionError("Must not generate an exam appointment")))
     monkeypatch.setattr(pipeline, "get_index", lambda: (_ for _ in ()).throw(AssertionError("Must not use teaching descriptors")))
     result = pipeline.run("when is the exam for CS4141?", history=[{"role":"assistant", "content":"Autumn exams are 05 December to 19 December 2026."}])

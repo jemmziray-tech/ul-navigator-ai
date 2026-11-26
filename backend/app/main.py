@@ -22,7 +22,7 @@ _ING = Path(__file__).resolve().parents[2] / "ingestion"
 if _ING.exists() and str(_ING) not in sys.path:
     sys.path.insert(0, str(_ING))
 
-from .api import admin, chat, public  # noqa: E402
+from .api import admin, chat, public, exams  # noqa: E402
 from .config import get_settings  # noqa: E402
 from .db import Conversation, Message, QueryLog, init_db, session_scope  # noqa: E402
 from .logging_conf import request_id_var, setup_logging  # noqa: E402
@@ -124,6 +124,7 @@ def create_app() -> FastAPI:
                              "request_id": request_id_var.get()}, status_code=500)
 
     app.include_router(public.router)
+    app.include_router(exams.router)
     app.include_router(chat.router)
     app.include_router(admin.router)
     return app

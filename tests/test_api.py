@@ -33,6 +33,21 @@ def test_health_and_ready(client):
     assert "api_key" not in json.dumps(r).lower()
 
 
+def test_exam_lookup_validates_requests_and_exposes_source_status(client, monkeypatch):
+    from app.api import exams
+    calls = []
+    def lookup(code, year, session):
+        calls.append((code, year, session))
+        return {"module":code, "status":"not_listed", "rows":[], "source_url":"https://www.timetable.ul.ie/UA/ExamModuleTimetable.aspx"}
+    monkeypatch.setattr(exams, "lookup_exam", lookup)
+    response = client.get("/api/exams/cs4141?academic_year=2026%2F27&session=autumn")
+    assert response.status_code == 200 and response.json()["module"] == "CS4141"
+    assert response.headers["Cache-Control"] == "no-store"
+    assert calls == [("CS4141", "2026/27", "autumn")]
+    assert client.get("/api/exams/invalid").status_code == 422
+    assert client.get("/api/exams/CS4141?session=unknown").status_code == 422
+
+
 def test_stats_reflect_real_index(client):
     s = client.get("/api/stats").json()
     assert s["documents"] == 7 and s["chunks"] > 7 and s["pdf_documents"] == 1

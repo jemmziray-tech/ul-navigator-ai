@@ -237,9 +237,13 @@ def run_stream(question: str, history: list[dict] | None = None,
     retrieval_query = _rewrite(question, history, a)
     schedule = analyse(retrieval_query)
     if exam_timing(retrieval_query) and schedule.module_codes:
-        yield done(module_exam_guidance(schedule.module_codes), [], [], "system", False, retrieval_query,
+        requested_session = re.search(r"\b(autumn|spring|summer|repeat|winter)\b", retrieval_query, re.I)
+        exam_year = schedule.academic_year if schedule.year_is_explicit else a.academic_year if a.year_is_explicit else None
+        exam_answer, confirmed = module_exam_guidance(schedule.module_codes, exam_year,
+                                                      requested_session[1] if requested_session else None)
+        yield done(exam_answer, [], [], "system", confirmed, retrieval_query,
                    ["Where can I check the general examination period?", "How do I report an exam timetable clash?"],
-                   ["module_exam_timetable_required"])
+                   ["module_exam_timetable_found" if confirmed else "module_exam_timetable_required"])
         return
     index = index or get_index()
     rr = retrieve(index, expand_query(retrieval_query), categories=categories,

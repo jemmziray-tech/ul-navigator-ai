@@ -13,12 +13,12 @@ export const DISCLAIMER =
   "UL Navigator AI is an independent information service and is not an official University of Limerick service.";
 
 /** Official source identity, kept separate from the independent product's own mark. */
-export function UniversityResourceMark({ compact = false }: { compact?: boolean }) {
-  return <a href="https://www.ul.ie/" target="_blank" rel="noreferrer" aria-label="University of Limerick — official website" className={cn("inline-flex items-center gap-3 rounded-xl border border-border bg-white px-3 py-2", compact ? "" : "text-left")}>
+export function UniversityResourceMark({ compact = false, header = false }: { compact?: boolean; header?: boolean }) {
+  return <a href="https://www.ul.ie/" target="_blank" rel="noreferrer" aria-label="University of Limerick — official website" title="Official UL website · UL Navigator AI is an independent service" className={cn("inline-flex shrink-0 items-center gap-3 rounded-xl border border-border bg-white", header ? "px-2 py-1" : "px-3 py-2", compact ? "" : "text-left")}>
     {/* The official site's SVG is served locally, preserving its original paths and proportions. */}
     {/* eslint-disable-next-line @next/next/no-img-element */}
-    <img src="/ul-logo.svg" width="148" height="68" alt="University of Limerick" className={compact ? "h-10 w-auto" : "h-14 w-auto"} />
-    {!compact && <span className="border-l border-[#005C46]/15 pl-3 text-[11px] leading-relaxed text-[#005C46]">Official UL resources<br /><span className="font-semibold">Independent information service</span></span>}
+    <img src="/ul-logo.svg" width="148" height="68" alt="University of Limerick" className={header ? "h-7 w-auto" : compact ? "h-10 w-auto" : "h-14 w-auto"} />
+    {!compact && !header && <span className="border-l border-[#005C46]/15 pl-3 text-[11px] leading-relaxed text-[#005C46]">Official UL resources<br /><span className="font-semibold">Independent information service</span></span>}
   </a>;
 }
 
@@ -67,6 +67,7 @@ const NAV = [
   { href: "/courses", label: "Courses" },
   { href: "/explorer", label: "Knowledge" },
   { href: "/tools", label: "Student tools" },
+  { href: "/exams", label: "Exams" },
   { href: "/knowledge-health", label: "Coverage" },
 ];
 
@@ -89,7 +90,7 @@ export function SiteHeader() {
         <Link href="/" aria-label="UL Navigator AI home">
           <Logo />
         </Link>
-        <nav className="hidden items-center gap-1 md:flex" aria-label="Main">
+        <nav className="hidden items-center gap-1 lg:flex" aria-label="Main">
           {NAV.map((n) => (
             <Link
               key={n.href}
@@ -109,7 +110,7 @@ export function SiteHeader() {
           <Button asChild size="sm" className="hidden sm:inline-flex">
             <Link href="/chat">Start chatting</Link>
           </Button>
-          <Button variant="ghost" size="icon" className="md:hidden" id="navigation-toggle" aria-label={open ? "Close menu" : "Open menu"} aria-controls="mobile-navigation" aria-expanded={open} onClick={() => setOpen((o) => !o)}>
+          <Button variant="ghost" size="icon" className="lg:hidden" id="navigation-toggle" aria-label={open ? "Close menu" : "Open menu"} aria-controls="mobile-navigation" aria-expanded={open} onClick={() => setOpen((o) => !o)}>
             {open ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
           </Button>
         </div>
@@ -120,7 +121,7 @@ export function SiteHeader() {
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: "auto", opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
-            className="overflow-hidden border-t border-border md:hidden"
+            className="overflow-hidden border-t border-border lg:hidden"
             id="mobile-navigation"
             aria-label="Mobile"
           >
@@ -156,6 +157,7 @@ export function SiteFooter() {
             <Link href="/tools" className="hover:text-foreground">Tools</Link>
             <Link href="/grade-planner" className="hover:text-foreground">Grade planner</Link>
             <Link href="/curricula" className="hover:text-foreground">Programme modules</Link>
+            <Link href="/exams" className="hover:text-foreground">Exam lookup</Link>
             <Link href="/about" className="hover:text-foreground">About</Link>
             <Link href="/privacy" className="hover:text-foreground">Privacy</Link>
           </div>

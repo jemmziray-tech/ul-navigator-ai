@@ -11,15 +11,16 @@ const initialModules = (): PlannedModule[] => Array.from({ length: 5 }, (_, i) =
 const f = (n: number) => n.toFixed(3);
 
 export function GradePlanner() {
-  const [current, setCurrent] = useState("3.10");
-  const [completed, setCompleted] = useState("60");
+  const [withPrevious, setWithPrevious] = useState(false);
+  const [current, setCurrent] = useState("");
+  const [completed, setCompleted] = useState("");
   const [target, setTarget] = useState("3.30");
   const [modules, setModules] = useState(initialModules);
   const [example, setExample] = useState(true);
-  const result = projectGrades(current, completed, target, modules);
+  const result = projectGrades(withPrevious ? current : "0", withPrevious ? completed : "0", target, modules);
   const update = (id: string, patch: Partial<PlannedModule>) => { setExample(false); setModules(rows => rows.map(m => m.id === id ? { ...m, ...patch } : m)); };
   const applyGrade = (grade: string) => { setExample(false); setModules(rows => rows.map(m => m.include ? { ...m, grade } : m)); };
-  const reset = () => { setCurrent("3.10"); setCompleted("60"); setTarget("3.30"); setModules(initialModules()); setExample(true); };
+  const reset = () => { setWithPrevious(false); setCurrent(""); setCompleted(""); setTarget("3.30"); setModules(initialModules()); setExample(true); };
 
   return <><SiteHeader /><main id="main" className="mx-auto max-w-6xl px-4 py-10 sm:px-6 sm:py-14">
     <div className="mb-8 flex flex-wrap items-start justify-between gap-4">
@@ -33,15 +34,17 @@ export function GradePlanner() {
     <div className="grid items-start gap-6 lg:grid-cols-[minmax(0,1fr)_360px]">
       <div className="min-w-0 space-y-6">
         <Card className="p-5 sm:p-6"><h2 className="text-lg font-semibold">1. Your starting point</h2>
-          <div className="mt-5 grid gap-4 sm:grid-cols-3">
-            <label className="space-y-2 text-sm">Current QCA<Input aria-label="Current QCA" type="number" min="0" max="4" step="0.01" value={current} onChange={e => { setCurrent(e.target.value); setExample(false); }} /></label>
-            <label className="space-y-2 text-sm">Counted credits<Input aria-label="Completed counted credits" type="number" min="0" max="600" step="0.5" value={completed} onChange={e => { setCompleted(e.target.value); setExample(false); }} /></label>
+          <label className="mt-4 flex items-center gap-3 text-sm"><input type="checkbox" checked={withPrevious} onChange={e => setWithPrevious(e.target.checked)} className="h-4 w-4 accent-emerald" />Include previous results in a cumulative projection</label>
+          <p className="mt-3 text-sm text-muted">{withPrevious ? "Enter your actual starting results below. They will be combined with the planned modules." : "These modules only. All A1 grades give a module QCA of 4.000; previous results are not included."}</p>
+          <div className={withPrevious ? "mt-5 grid gap-4 sm:grid-cols-3" : "mt-5 grid gap-4"}>
+            {withPrevious && <><label className="space-y-2 text-sm">Current QCA<Input aria-label="Current QCA" type="number" min="0" max="4" step="0.01" value={current} onChange={e => { setCurrent(e.target.value); setExample(false); }} /></label>
+            <label className="space-y-2 text-sm">Previous counted credits<Input aria-label="Completed counted credits" type="number" min="0" max="600" step="0.5" value={completed} onChange={e => { setCompleted(e.target.value); setExample(false); }} /></label></>}
             <label className="space-y-2 text-sm">Target QCA<Input aria-label="Target QCA" type="number" min="0" max="4" step="0.01" value={target} onChange={e => { setTarget(e.target.value); setExample(false); }} /></label>
           </div>
-          <p className="mt-4 text-xs leading-relaxed text-muted">Use credits that count towards this QCA. If your programme weights years differently, apply the same weighting to both completed and remaining credits. A rounded current QCA makes this an estimate.</p>
+          <p className="mt-4 text-xs leading-relaxed text-muted">{withPrevious ? "Use credits that count towards this QCA. If your programme weights years differently, apply the same weighting to both completed and remaining credits. A rounded current QCA makes this an estimate." : "The QCA is the credit-weighted average of the included module grade points. Excluded modules do not affect it."}</p>
           <div className="mt-4 flex flex-wrap gap-2" aria-label="Choose target band">{gradeRules.classifications.map(c => <Button key={c.min_qca} size="sm" variant={Number(target) === c.min_qca ? "subtle" : "outline"} aria-pressed={Number(target) === c.min_qca} onClick={() => { setTarget(c.min_qca.toFixed(2)); setExample(false); }}>{c.min_qca.toFixed(2)} · {c.label.startsWith("First") ? "First" : c.label.includes("2.1") ? "2.1" : c.label.includes("2.2") ? "2.2" : "Third"}</Button>)}</div>
         </Card>
-        <Card className="p-5 sm:p-6"><div className="flex flex-wrap items-center justify-between gap-3"><h2 className="text-lg font-semibold">2. Explore your remaining modules</h2><span className="text-xs text-muted">Up to 40 modules</span></div>
+        <Card className="p-5 sm:p-6"><div className="flex flex-wrap items-center justify-between gap-3"><h2 className="text-lg font-semibold">{withPrevious ? "2. Explore your remaining modules" : "2. Your module grades"}</h2><span className="text-xs text-muted">Up to 40 modules</span></div>
           <div className="my-4 flex flex-wrap gap-2"><Button size="sm" variant="outline" onClick={() => applyGrade("B1")}>All B1</Button><Button size="sm" variant="outline" onClick={() => applyGrade("A2")}>All A2</Button><Button size="sm" variant="outline" onClick={() => applyGrade("A1")}>All A1</Button></div>
           <ol className="space-y-3">{modules.map((m, i) => <li key={m.id} className="rounded-xl border border-border bg-background p-3">
             <div className="mb-3 flex items-center justify-between gap-2"><label className="flex items-center gap-2 text-sm"><input type="checkbox" checked={m.include} onChange={e => update(m.id, { include: e.target.checked })} aria-label={`Include module ${i + 1}`} className="accent-[var(--emerald)]" />Module {i + 1}</label><Button variant="ghost" size="icon" aria-label={`Remove planned module ${i + 1}`} disabled={modules.length === 1} onClick={() => { setExample(false); setModules(rows => rows.filter(r => r.id !== m.id)); }}><Trash2 className="h-4 w-4" /></Button></div>
@@ -56,10 +59,11 @@ export function GradePlanner() {
         </Card>
       </div>
       <aside id="projection" className="scroll-mt-20 space-y-4 lg:sticky lg:top-20" aria-label="Your projection">
-        <Card className="overflow-hidden border-emerald/40"><div className="bg-emerald-soft p-5 sm:p-6"><p className="text-xs font-semibold uppercase tracking-widest text-muted">Your projected QCA</p>
+        <Card className="overflow-hidden border-emerald/40"><div className="bg-emerald-soft p-5 sm:p-6"><p className="text-xs font-semibold uppercase tracking-widest text-muted">{withPrevious ? "Cumulative QCA projection" : "QCA for these modules"}</p>
           {"error" in result ? <p className="mt-4 text-sm" role="alert">{result.error}</p> : <>
             <div className="mt-3 flex items-end gap-3"><span className="font-display text-6xl tabular-nums">{f(result.projected)}</span><span className="pb-2 text-sm text-muted">/ 4.000</span></div>
             <p className="mt-2 text-sm">{result.band}</p><p className="mt-1 text-xs text-muted">Indicative band for the credits entered</p>
+            {withPrevious && <p className="mt-3 text-sm">These modules: <strong>{f(result.moduleQca)}</strong> over {result.remaining} credits. Combined with {result.counted} previous counted credits at {f(result.qca)}.</p>}
           </>}
         </div>{!("error" in result) && <div className="space-y-5 p-5 sm:p-6" aria-live="polite" aria-atomic="true">
           <div className="flex items-start gap-2 text-sm">{result.reached ? <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-emerald" /> : <Target className="mt-0.5 h-4 w-4 shrink-0 text-emerald" />}<p>{result.reached ? "This scenario reaches your numeric target." : result.possible ? "Your target is within mathematical reach. Adjust your expected grades to explore it." : "Even all A1 grades would fall short with these credits. Try a revised target or check which credits count."}</p></div>
@@ -72,6 +76,6 @@ export function GradePlanner() {
         <Card className="p-5 text-xs leading-relaxed text-muted"><p className="font-semibold text-foreground">Grounded in UL’s 2026/27 rules</p><p className="mt-2">Programme weighting, repeat restrictions and award eligibility can change the official result. Confirm which semesters and credits count with Academic Registry.</p><a href={gradeRules.sources[0].url} target="_blank" rel="noreferrer" className="mt-3 inline-flex items-center gap-1 text-emerald underline underline-offset-4">Read the official handbook <ArrowUpRight className="h-3 w-3" /></a><p className="mt-2">PDF pages 13–15: grades and bands. Page 26: QCA formula and weighting.</p><Link href="/tools#qca" className="mt-3 block text-emerald underline underline-offset-4">Calculate QCA from existing grades</Link></Card>
       </aside>
     </div>
-    {!("error" in result) && <a href="#projection" className="sticky bottom-3 z-30 mt-5 flex items-center justify-between gap-3 rounded-xl border border-emerald/40 bg-surface px-4 py-3 text-sm shadow-lg lg:hidden"><span>Projected QCA <strong className="ml-1 tabular-nums">{f(result.projected)}</strong></span><span className="text-emerald">See projection ↑</span></a>}
+    {!("error" in result) && <a href="#projection" className="sticky bottom-3 z-30 mt-5 flex items-center justify-between gap-3 rounded-xl border border-emerald/40 bg-surface px-4 py-3 text-sm shadow-lg lg:hidden"><span className="min-w-0">{withPrevious ? "Cumulative QCA" : "Modules QCA"} <strong className="ml-1 tabular-nums">{f(result.projected)}</strong></span><span className="shrink-0 text-xs text-emerald">See result ↑</span></a>}
   </main><SiteFooter /></>;
 }

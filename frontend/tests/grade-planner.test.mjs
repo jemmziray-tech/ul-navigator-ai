@@ -33,3 +33,12 @@ test("invalid inputs do not silently become zero and failing outcomes are flagge
   assert.ok(projectGrades("3", "60", "3.3", rows.map(m => ({ ...m, include: false }))).error);
   assert.equal(projectGrades("3", "60", "3.3", [{ ...rows[0], grade: "F" }]).deficient, true);
 });
+
+test("all A1 modules give 4.0 independently of the cumulative projection", () => {
+  const allA1 = rows.map(m => ({ ...m, grade:"A1" }));
+  assert.equal(projectGrades("0", "0", "3.3", allA1).projected, 4);
+  const cumulative = projectGrades("3.1", "60", "3.3", allA1);
+  assert.equal(cumulative.moduleQca, 4);
+  assert.equal(cumulative.projected, 3.4);
+  assert.equal(projectGrades("4", "60", "4", allA1).projected, 4);
+});

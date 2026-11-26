@@ -310,7 +310,7 @@ function ChatWorkspace() {
 
       <div className="flex min-w-0 flex-1 flex-col">
         <header className="flex h-14 shrink-0 items-center justify-between gap-2 border-b border-border px-3">
-          <div className="flex items-center gap-1">
+          <div className="flex min-w-0 flex-1 items-center gap-2">
             {!sidebar && (
               <Button variant="ghost" size="icon" className="hidden md:inline-flex" aria-label="Expand sidebar" onClick={() => setSidebar(true)}>
                 <PanelLeftOpen className="h-4 w-4" />
@@ -319,9 +319,11 @@ function ChatWorkspace() {
             <Button variant="ghost" size="icon" className="md:hidden" aria-label="Open conversation history" onClick={() => setMobileSidebar(true)}>
               <PanelLeftOpen className="h-4 w-4" />
             </Button>
-            <span className="truncate text-sm font-medium">{convs.find((c) => c.id === convId)?.title || "New conversation"}</span>
+            <UniversityResourceMark header />
+            <span className="min-w-0 truncate text-sm font-medium">{convs.find((c) => c.id === convId)?.title || "New conversation"}</span>
           </div>
           <div className="flex items-center gap-1">
+            <Button asChild variant="ghost" size="sm" className="hidden sm:inline-flex"><Link href="/exams">Exams</Link></Button>
             <Button asChild variant="ghost" size="sm"><Link href="/courses">Courses</Link></Button>
             <Button asChild variant="ghost" size="sm" className="hidden sm:inline-flex"><Link href="/explorer">Sources</Link></Button>
             <Button asChild variant="ghost" size="sm" className="hidden sm:inline-flex"><Link href="/tools">Tools</Link></Button>
